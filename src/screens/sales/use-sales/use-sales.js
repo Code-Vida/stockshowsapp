@@ -95,6 +95,7 @@ const useSales = () => {
     formState,
     handleSubmit,
     setValue,
+    setBarCode,
   }
 }
 

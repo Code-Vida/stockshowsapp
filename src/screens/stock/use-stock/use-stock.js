@@ -100,6 +100,7 @@ const useStock = () => {
     control,
     handleSubmit,
     formState,
+    setBarCode,
   }
 }
 

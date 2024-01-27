@@ -43,6 +43,7 @@ const Stock = () => {
     control,
     handleSubmit,
     formState,
+    setBarCode,
   } = useStock()
 
   useEffect(() => {
@@ -60,7 +61,7 @@ const Stock = () => {
         'purchaseValue',
         product?.purchaseValue ? product.purchaseValue.toString() : '',
       )
-      setValue('value', product?.value ? product.purchaseValue.toString() : '')
+      setValue('value', product?.value ? product.value.toString() : '')
       setValue('purchaseDate', new Date(product?.purchaseDate) || '')
     }
   }, [barCode, product])
@@ -100,9 +101,15 @@ const Stock = () => {
                     <TextInput
                       label="Código de barras"
                       style={styles.input}
-                      value={barCode}
-                      onBlur={field.onBlur}
-                      onChangeText={field.onChange}
+                      value={barCode || field.value}
+                      onBlur={() => {
+                        field.onBlur()
+                        getProduct({ data: field.value })
+                      }}
+                      onChangeText={(text) => {
+                        setBarCode(text) // Atualize o estado local
+                        field.onChange(text)
+                      }}
                     />
                     {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
                   </>

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { View, StyleSheet, ScrollView } from 'react-native'
-import { Button, Snackbar, Avatar, Card } from 'react-native-paper'
+import { Button, Snackbar, Avatar, Card, TextInput } from 'react-native-paper'
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import useSales from './use-sales/use-sales'
 import { registerTranslation } from 'react-native-paper-dates'
@@ -42,6 +42,7 @@ const Sales = () => {
     control,
     handleSubmit,
     setValue,
+    setBarCode,
   } = useSales()
 
   useEffect(() => {
@@ -83,31 +84,44 @@ const Sales = () => {
       ) : (
         <ScrollView>
           <View style={styles.container}>
-            <Button
-              icon="camera"
-              mode="contained"
-              style={{
-                flex: 1,
-                marginLeft: 5,
-                marginRight: 5,
-                height: 50,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                alignContent: 'center',
-              }}
-              contentStyle={{
-                flex: 1,
-                flexDirection: 'row',
-                width: 340,
-                alignItems: 'center',
-                justifyContent: 'center',
-                alignContent: 'center',
-              }}
-              onPress={() => setShowScanner(true)}
-            >
-              Scan
-            </Button>
+            <View style={styles.box}>
+              <Controller
+                control={control}
+                defaultValue=""
+                name="barCode"
+                render={({ field }) => (
+                  <>
+                    <TextInput
+                      label="Código de barras"
+                      style={styles.input}
+                      value={barCode || field.value}
+                      onBlur={() => {
+                        field.onBlur()
+                        getProduct({ data: field.value })
+                      }}
+                      onChangeText={(text) => {
+                        setBarCode(text) // Atualize o estado local
+                        field.onChange(text)
+                      }}
+                    />
+                    {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
+                  </>
+                )}
+              />
+              <Button
+                icon="camera"
+                mode="contained"
+                style={{
+                  marginLeft: 5,
+                  height: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onPress={() => setShowScanner(true)}
+              >
+                Scan
+              </Button>
+            </View>
             <View style={styles.box}>
               <Controller
                 control={control}
