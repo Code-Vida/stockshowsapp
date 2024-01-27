@@ -50,15 +50,18 @@ const Stock = () => {
       setValue('barCode', barCode)
     }
     if (product) {
-      setValue('id', product.id)
-      setValue('brand', product.brand)
-      setValue('model', product.model)
-      setValue('color', product.color)
-      setValue('amount', product.amount.toString())
-      setValue('number', product.number.toString())
-      setValue('purchaseValue', product.purchaseValue.toString())
-      setValue('value', product.value.toString())
-      setValue('purchaseDate', new Date(product.purchaseDate))
+      setValue('id', product?.id || '')
+      setValue('brand', product?.brand || '')
+      setValue('model', product?.model || '')
+      setValue('color', product?.color || '')
+      setValue('amount', product?.amount ? product.amount.toString() : '')
+      setValue('number', product?.number ? product.number.toString() : '')
+      setValue(
+        'purchaseValue',
+        product?.purchaseValue ? product.purchaseValue.toString() : '',
+      )
+      setValue('value', product?.value ? product.purchaseValue.toString() : '')
+      setValue('purchaseDate', new Date(product?.purchaseDate) || '')
     }
   }, [barCode, product])
 

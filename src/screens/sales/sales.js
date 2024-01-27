@@ -49,12 +49,12 @@ const Sales = () => {
       setValue('barCode', barCode)
     }
     if (product) {
-      setValue('id', product.id)
-      setValue('brand', product.brand)
-      setValue('model', product.model)
-      setValue('color', product.color)
-      setValue('number', product.number.toString())
-      setValue('value', product.value.toString())
+      setValue('id', product?.id || '')
+      setValue('brand', product?.brand || '')
+      setValue('model', product?.model || '')
+      setValue('color', product?.color || '')
+      setValue('number', product?.number ? product.number.toString() : '')
+      setValue('value', product?.value ? product.value.toString() : '')
     }
   }, [barCode, product])
 

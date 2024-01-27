@@ -1,5 +1,5 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { GET_PRODUCT, SALES_PRODUCT } from './graphql'
 import { useForm } from 'react-hook-form'
 
@@ -12,7 +12,7 @@ const useSales = () => {
     mode: 'onChange',
   })
 
-  const [salesProductMutation] = useMutation(SALES_PRODUCT)
+  const [salesProductMutation, { data: sales }] = useMutation(SALES_PRODUCT)
 
   const [getProductQuery, { loading, error, data }] = useLazyQuery(
     GET_PRODUCT,
@@ -51,6 +51,12 @@ const useSales = () => {
             setMessage('Transação executada com sucesso.')
             setVisible(true)
             reset()
+            setValue('id', '')
+            setValue('model', '')
+            setValue('color', '')
+            setValue('number', '')
+            setValue('value', '')
+            setValue('brand', '')
           } else {
             setMessage('Erro ao executar a transação')
             setVisible(true)
@@ -65,6 +71,12 @@ const useSales = () => {
     },
     [salesProductMutation],
   )
+
+  useEffect(() => {
+    if (sales) {
+      reset()
+    }
+  }, [sales])
 
   const onDismissSnackBar = () => setVisible(false)
   return {

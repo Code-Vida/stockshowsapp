@@ -35,6 +35,7 @@ const useSalesReport = () => {
       }
     }
     if (error) {
+      console.log(error)
       setMessage('Erro ao executar a transação')
       setVisible(true)
     }

@@ -1,5 +1,5 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { GET_PRODUCT, CREATE_PRODUCT } from './graphql'
 import { useForm } from 'react-hook-form'
 
@@ -12,7 +12,7 @@ const useStock = () => {
     mode: 'onChange',
   })
 
-  const [createProductMutation] = useMutation(CREATE_PRODUCT)
+  const [createProductMutation, { data: create }] = useMutation(CREATE_PRODUCT)
 
   const [getProductQuery, { loading, error, data }] = useLazyQuery(
     GET_PRODUCT,
@@ -47,12 +47,21 @@ const useStock = () => {
           input,
         },
       })
-        .then((res) => {
+        .then(async (res) => {
           if (res?.data?.createProduct?.id) {
             setMessage('Transação executada com sucesso.')
             setVisible(true)
-            reset()
             setBarCode(null)
+            reset()
+            setValue('id', '')
+            setValue('model', '')
+            setValue('color', '')
+            setValue('amount', '')
+            setValue('number', '')
+            setValue('purchaseValue', '')
+            setValue('value', '')
+            setValue('purchaseDate', '')
+            setValue('brand', '')
           } else {
             setMessage('Erro ao executar a transação')
             setVisible(true)
@@ -67,6 +76,12 @@ const useStock = () => {
     },
     [createProductMutation],
   )
+
+  useEffect(() => {
+    if (create) {
+      reset()
+    }
+  }, [create])
 
   const onDismissSnackBar = () => setVisible(false)
   return {
