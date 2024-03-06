@@ -91,7 +91,7 @@ const useStock = () => {
     showScanner,
     setShowScanner,
     barCode,
-    product: data?.getProduct?.nodes,
+    product: data?.getProduct?.nodes[0],
     onDismissSnackBar,
     visible,
     submit,

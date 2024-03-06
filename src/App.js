@@ -1,7 +1,11 @@
 import React from 'react'
 import Home from 'screens/home/home'
-import { PaperProvider } from 'react-native-paper'
-import { NavigationContainer } from '@react-navigation/native'
+import {
+  Provider as PaperProvider,
+  DefaultTheme as PaperDefaultTheme,
+} from 'react-native-paper'
+
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import Sales from 'screens/sales/sales'
 import Products from 'screens/products/products'
@@ -18,10 +22,18 @@ registerTranslation('en-GB', pt)
 const Stack = createStackNavigator()
 const HomeScreen = ({ navigation }) => <Home navigation={navigation} />
 
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    text: '#000',
+  },
+}
+
 const App = () => (
   <ApolloProvider client={client}>
-    <PaperProvider>
-      <NavigationContainer>
+    <PaperProvider theme={PaperDefaultTheme}>
+      <NavigationContainer theme={MyTheme}>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen

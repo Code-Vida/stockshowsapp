@@ -8,6 +8,9 @@ const useSales = () => {
   const [barCode, setBarCode] = useState('')
   const [visible, setVisible] = useState(false)
   const [message, setMessage] = useState()
+  const [openBrandModal, setOpenBrandModal] = useState(false)
+  const [openChooseProduct, setOpenChooseProduct] = useState(false)
+  const [chooseProduct, setChoosenProduct] = useState()
   const { control, formState, handleSubmit, setValue, reset } = useForm({
     mode: 'onChange',
   })
@@ -26,6 +29,7 @@ const useSales = () => {
       },
     },
   )
+
   const getProduct = ({ data }) => {
     getProductQuery({
       variables: {
@@ -38,7 +42,7 @@ const useSales = () => {
     setShowScanner(false)
   }
 
-  const submit = useCallback(
+  const submitSales = useCallback(
     (data) => {
       const input = normalizeValues(data)
       salesProductMutation({
@@ -72,6 +76,18 @@ const useSales = () => {
     [salesProductMutation],
   )
 
+  const submit = useCallback((data) => {
+    const input = normalizeInput(data)
+
+    getProductQuery({
+      variables: {
+        input,
+      },
+    })
+    setOpenBrandModal(false)
+    setOpenChooseProduct(true)
+  }, [])
+
   useEffect(() => {
     if (sales) {
       reset()
@@ -79,6 +95,7 @@ const useSales = () => {
   }, [sales])
 
   const onDismissSnackBar = () => setVisible(false)
+
   return {
     loading,
     error,
@@ -96,6 +113,13 @@ const useSales = () => {
     handleSubmit,
     setValue,
     setBarCode,
+    setOpenBrandModal,
+    openBrandModal,
+    submitSales,
+    openChooseProduct,
+    setChoosenProduct,
+    chooseProduct,
+    setOpenChooseProduct,
   }
 }
 
@@ -111,4 +135,13 @@ const normalizeValues = (data) => {
     number: parseInt(data.number),
     value: parseFloat(data.value),
   }
+}
+
+const normalizeInput = (data) => {
+  for (const key in data) {
+    if (typeof data[key] === 'string' && data[key].trim() === '') {
+      delete data[key]
+    }
+  }
+  return data
 }

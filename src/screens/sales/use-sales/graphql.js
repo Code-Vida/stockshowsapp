@@ -4,6 +4,7 @@ export const GET_PRODUCT = gql`
   query GetProduct($input: ProductInput) {
     getProduct(input: $input) {
       nodes {
+        barCode
         id
         brand
         model
@@ -13,6 +14,7 @@ export const GET_PRODUCT = gql`
         purchaseValue
         purchaseDate
         amount
+        sales
       }
     }
   }

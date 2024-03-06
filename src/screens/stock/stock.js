@@ -62,10 +62,12 @@ const Stock = () => {
         product?.purchaseValue ? product.purchaseValue.toString() : '',
       )
       setValue('value', product?.value ? product.value.toString() : '')
-      setValue('purchaseDate', new Date(product?.purchaseDate) || '')
+      setValue(
+        'purchaseDate',
+        product?.purchaseDate ? new Date(product?.purchaseDate) : '',
+      )
     }
   }, [barCode, product])
-
   return (
     <View style={{ flex: 1 }}>
       {showScanner ? (
@@ -261,7 +263,7 @@ const Stock = () => {
                       label="Valor de compra"
                       keyboardType="numeric"
                       style={styles.input}
-                      value={field.value}
+                      value={new Date(field.value)}
                       onBlur={field.onBlur}
                       onChangeText={field.onChange}
                     />

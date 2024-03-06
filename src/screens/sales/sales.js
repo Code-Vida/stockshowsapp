@@ -1,10 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { View, StyleSheet, ScrollView } from 'react-native'
-import { Button, Snackbar, Avatar, Card, TextInput } from 'react-native-paper'
+import { Button, Snackbar, Avatar, Card } from 'react-native-paper'
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import useSales from './use-sales/use-sales'
 import { registerTranslation } from 'react-native-paper-dates'
 import { Controller } from 'react-hook-form'
+import Fab from '../../components/fab'
+import BrandModal from '../../components/brandModal'
+import ChooseProductModal from '../../components/chooseProductModal'
 
 registerTranslation('pt', {
   save: 'Salvar',
@@ -42,22 +45,32 @@ const Sales = () => {
     control,
     handleSubmit,
     setValue,
-    setBarCode,
+    setOpenBrandModal,
+    openBrandModal,
+    submitSales,
+    openChooseProduct,
+    setChoosenProduct,
+    chooseProduct,
+    setOpenChooseProduct,
   } = useSales()
 
   useEffect(() => {
-    if (barCode) {
-      setValue('barCode', barCode)
+    if (chooseProduct) {
+      setValue('id', chooseProduct?.id || '')
+      setValue('barCode', chooseProduct?.barCode || '')
+      setValue('brand', chooseProduct?.brand || '')
+      setValue('model', chooseProduct?.model || '')
+      setValue('color', chooseProduct?.color || '')
+      setValue(
+        'number',
+        chooseProduct?.number ? chooseProduct.number.toString() : '',
+      )
+      setValue(
+        'value',
+        chooseProduct?.value ? chooseProduct.value.toString() : '',
+      )
     }
-    if (product) {
-      setValue('id', product?.id || '')
-      setValue('brand', product?.brand || '')
-      setValue('model', product?.model || '')
-      setValue('color', product?.color || '')
-      setValue('number', product?.number ? product.number.toString() : '')
-      setValue('value', product?.value ? product.value.toString() : '')
-    }
-  }, [barCode, product])
+  }, [barCode, chooseProduct])
 
   return (
     <View style={{ flex: 1 }}>
@@ -84,44 +97,6 @@ const Sales = () => {
       ) : (
         <ScrollView>
           <View style={styles.container}>
-            <View style={styles.box}>
-              <Controller
-                control={control}
-                defaultValue=""
-                name="barCode"
-                render={({ field }) => (
-                  <>
-                    <TextInput
-                      label="Código de barras"
-                      style={styles.input}
-                      value={barCode || field.value}
-                      onBlur={() => {
-                        field.onBlur()
-                        getProduct({ data: field.value })
-                      }}
-                      onChangeText={(text) => {
-                        setBarCode(text) // Atualize o estado local
-                        field.onChange(text)
-                      }}
-                    />
-                    {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
-                  </>
-                )}
-              />
-              <Button
-                icon="camera"
-                mode="contained"
-                style={{
-                  marginLeft: 5,
-                  height: 50,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                onPress={() => setShowScanner(true)}
-              >
-                Scan
-              </Button>
-            </View>
             <View style={styles.box}>
               <Controller
                 control={control}
@@ -251,8 +226,8 @@ const Sales = () => {
               <Button
                 style={{ flex: 1, margin: 8 }}
                 mode="contained"
-                onPress={handleSubmit(submit)}
-                disabled={!product}
+                onPress={handleSubmit(submitSales)}
+                disabled={!chooseProduct}
               >
                 Saída
               </Button>
@@ -272,6 +247,25 @@ const Sales = () => {
       >
         {message}
       </Snackbar>
+
+      <Fab
+        setShowScanner={setShowScanner}
+        setOpenBrandModal={setOpenBrandModal}
+      />
+
+      <BrandModal
+        openModal={openBrandModal}
+        setOpenBrandModal={setOpenBrandModal}
+        control={control}
+        handleSubmit={handleSubmit(submit)}
+      />
+
+      <ChooseProductModal
+        openModal={openChooseProduct}
+        products={product}
+        setOpenChooseProduct={setOpenChooseProduct}
+        setChoosenProduct={setChoosenProduct}
+      />
     </View>
   )
 }

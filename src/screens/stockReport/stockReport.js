@@ -1,9 +1,15 @@
 import React, { useRef, useState } from 'react'
-import { DataTable } from 'react-native-paper'
+import { DataTable, Text } from 'react-native-paper'
 import { View, StyleSheet, ScrollView } from 'react-native'
-import { Controller } from 'react-hook-form'
-import { Button, Snackbar, TextInput } from 'react-native-paper'
+import {
+  Button,
+  Snackbar,
+  ActivityIndicator,
+  MD2Colors,
+} from 'react-native-paper'
 import QRCodeScanner from 'react-native-qrcode-scanner'
+import Fab from '../../components/fab'
+import BrandModal from '../../components/brandModal'
 
 import useStockReport from './use-stock-report/use-stock-report'
 
@@ -18,8 +24,16 @@ const StockReport = () => {
     message,
     showScanner,
     getProduct,
-    barCode,
     setShowScanner,
+    setPage,
+    page,
+    loading,
+    pagination,
+    setOpenBrandModal,
+    openBrandModal,
+    handleSubmit,
+    submit,
+    total,
   } = useStockReport()
 
   return (
@@ -47,39 +61,10 @@ const StockReport = () => {
       ) : (
         <View style={styles.container}>
           <View style={styles.box}>
-            <Controller
-              control={control}
-              defaultValue=""
-              name="barCode"
-              render={({ field }) => (
-                <>
-                  <TextInput
-                    label="Código de barras"
-                    style={styles.input}
-                    value={barCode}
-                    onBlur={field.onBlur}
-                    onChangeText={field.onChange}
-                  />
-                  {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
-                </>
-              )}
-            />
-            <Button
-              icon="camera"
-              mode="contained"
-              style={{
-                marginLeft: 5,
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onPress={() => setShowScanner(true)}
-            >
-              Scan
-            </Button>
+            <Text>Total de Vendas: {total?.totalSalesSum.toFixed(2)}</Text>
+            <Text>Total de produtos: {total?.totalSum.toFixed(2)}</Text>
           </View>
-
-          <View style={styles.box}>
+          <View style={styles.table}>
             <DataTable>
               <DataTable.Header>
                 <DataTable.Title textStyle={styles.title}>
@@ -90,41 +75,70 @@ const StockReport = () => {
                 </DataTable.Title>
                 <DataTable.Title textStyle={styles.title}>Cor</DataTable.Title>
                 <DataTable.Title textStyle={styles.title}>
-                  Quantidade
+                  Número
+                </DataTable.Title>
+                <DataTable.Title textStyle={styles.title}>Qtd</DataTable.Title>
+                <DataTable.Title textStyle={styles.title}>
+                  Preço compra
+                </DataTable.Title>
+                <DataTable.Title textStyle={styles.title}>
+                  Preço venda
                 </DataTable.Title>
               </DataTable.Header>
               <ScrollView>
-                {product && (
-                  <DataTable.Row key={product.id}>
-                    <DataTable.Cell
-                      style={styles.title}
-                      textStyle={styles.title}
-                    >
-                      {product.brand}
-                    </DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.title}>
-                      {product.model}
-                    </DataTable.Cell>
-                    <DataTable.Cell textStyle={styles.title}>
-                      {product.color}
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric textStyle={styles.title}>
-                      {product.amount}
-                    </DataTable.Cell>
-                  </DataTable.Row>
+                {!product && (
+                  <ActivityIndicator
+                    animating={loading}
+                    color={MD2Colors.red800}
+                  />
                 )}
+                {product &&
+                  product.map((row) => {
+                    return (
+                      <DataTable.Row key={row.id}>
+                        <DataTable.Cell
+                          style={styles.title}
+                          textStyle={styles.title}
+                        >
+                          {row.brand}
+                        </DataTable.Cell>
+                        <DataTable.Cell textStyle={styles.title}>
+                          {row.model}
+                        </DataTable.Cell>
+                        <DataTable.Cell textStyle={styles.title}>
+                          {row.color}
+                        </DataTable.Cell>
+                        <DataTable.Cell textStyle={styles.title}>
+                          {row.number}
+                        </DataTable.Cell>
+                        <DataTable.Cell textStyle={styles.title}>
+                          {row.amount - row.sales}
+                        </DataTable.Cell>
+                        <DataTable.Cell textStyle={styles.title}>
+                          {row.purchaseValue}
+                        </DataTable.Cell>
+                        <DataTable.Cell textStyle={styles.title}>
+                          {row.value}
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                    )
+                  })}
               </ScrollView>
-              {/* <DataTable.Pagination
-        page={page}
-        numberOfPages={Math.ceil(items.length / itemsPerPage)}
-        onPageChange={(page) => setPage(page)}
-        label={`${from + 1}-${to} of ${items.length}`}
-        numberOfItemsPerPageList={numberOfItemsPerPageList}
-        numberOfItemsPerPage={itemsPerPage}
-        onItemsPerPageChange={onItemsPerPageChange}
-        showFastPaginationControls
-        selectPageDropdownLabel={'Rows per page'}
-      />  */}
+              <DataTable.Pagination
+                style={styles.pagination}
+                textStyle={styles.title}
+                page={page}
+                numberOfPages={pagination?.lastPage || 0}
+                onPageChange={(page) => setPage(page)}
+                label={`${pagination?.page || 0} de ${
+                  pagination?.lastPage || 0
+                }`}
+                // numberOfItemsPerPageList={numberOfItemsPerPageList}
+                // numberOfItemsPerPage={itemsPerPage}
+                // onItemsPerPageChange={onItemsPerPageChange}
+                showFastPaginationControls
+                // selectPageDropdownLabel={'Rows per page'}
+              />
             </DataTable>
           </View>
           <Snackbar
@@ -141,6 +155,17 @@ const StockReport = () => {
           </Snackbar>
         </View>
       )}
+      <Fab
+        setShowScanner={setShowScanner}
+        setOpenBrandModal={setOpenBrandModal}
+      />
+
+      <BrandModal
+        openModal={openBrandModal}
+        setOpenBrandModal={setOpenBrandModal}
+        control={control}
+        handleSubmit={handleSubmit(submit)}
+      />
     </View>
   )
 }
@@ -150,6 +175,7 @@ export default StockReport
 const styles = StyleSheet.create({
   title: {
     color: '#000',
+    alignContent: 'center',
   },
   container: {
     flex: 1,
@@ -159,6 +185,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+  },
+  table: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 150,
+    justifyContent: 'space-between',
   },
   boxCamera: {
     flexDirection: 'row',
@@ -171,5 +203,14 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 5,
     marginRight: 5,
+  },
+  paginationContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  pagination: {
+    justifyContent: 'flex-start',
   },
 })
