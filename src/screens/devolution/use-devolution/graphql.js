@@ -4,8 +4,8 @@ export const GET_PRODUCT = gql`
   query GetProduct($input: ProductInput) {
     getProduct(input: $input) {
       nodes {
-        id
         barCode
+        id
         brand
         model
         color
@@ -14,15 +14,14 @@ export const GET_PRODUCT = gql`
         purchaseValue
         purchaseDate
         amount
+        sales
       }
     }
   }
 `
 
-export const CREATE_PRODUCT = gql`
-  mutation CreateProduct($input: ProductInput) {
-    createProduct(input: $input) {
-      id
-    }
+export const DEVOLUTION_PRODUCT = gql`
+  mutation DevolutionProduct($input: ID) {
+    devolution(input: $input)
   }
 `

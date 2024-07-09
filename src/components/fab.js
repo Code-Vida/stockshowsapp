@@ -16,12 +16,6 @@ const Fab = ({ setShowScanner, setOpenBrandModal }) => {
         visible
         icon={open ? 'calendar-today' : 'database-search'}
         actions={[
-          // { icon: 'camera', onPress: () => console.log('Pressed add') },
-          // {
-          //   icon: 'star',
-          //   label: 'Star',
-          //   onPress: () => console.log('Pressed star'),
-          // },
           {
             icon: 'star',
             label: 'Marca / Modelo',

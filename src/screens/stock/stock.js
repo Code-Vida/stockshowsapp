@@ -42,16 +42,18 @@ const Stock = () => {
     setValue,
     control,
     handleSubmit,
-    formState,
+    errors,
     setBarCode,
+    submitSearch,
+    setBrand,
   } = useStock()
-
   useEffect(() => {
     if (barCode) {
       setValue('barCode', barCode)
     }
     if (product) {
       setValue('id', product?.id || '')
+      setValue('barCode', product?.barCode || '')
       setValue('brand', product?.brand || '')
       setValue('model', product?.model || '')
       setValue('color', product?.color || '')
@@ -97,6 +99,9 @@ const Stock = () => {
               <Controller
                 control={control}
                 defaultValue=""
+                rules={{
+                  required: 'Campo obrigatório',
+                }}
                 name="barCode"
                 render={({ field }) => (
                   <>
@@ -109,9 +114,10 @@ const Stock = () => {
                         getProduct({ data: field.value })
                       }}
                       onChangeText={(text) => {
-                        setBarCode(text) // Atualize o estado local
+                        setBarCode(text)
                         field.onChange(text)
                       }}
+                      error={errors?.barCode?.message}
                     />
                     {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
                   </>
@@ -120,12 +126,7 @@ const Stock = () => {
               <Button
                 icon="camera"
                 mode="contained"
-                style={{
-                  marginLeft: 5,
-                  height: 50,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                style={styles.button}
                 onPress={() => setShowScanner(true)}
               >
                 Scan
@@ -136,6 +137,9 @@ const Stock = () => {
                 control={control}
                 defaultValue=""
                 name="brand"
+                rules={{
+                  required: 'Campo obrigatório',
+                }}
                 render={({ field }) => (
                   <>
                     <TextInput
@@ -143,18 +147,34 @@ const Stock = () => {
                       style={styles.input}
                       value={field.value}
                       onBlur={field.onBlur}
-                      onChangeText={field.onChange}
+                      onChangeText={(text) => {
+                        setBrand(text)
+                        field.onChange(text)
+                      }}
+                      error={errors?.brand?.message}
                     />
                     {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
                   </>
                 )}
               />
+              <Button
+                style={styles.button}
+                icon="search-web"
+                mode="contained"
+                onPress={() => submitSearch()}
+                //disabled={!formState.isValid}
+              >
+                Buscar
+              </Button>
             </View>
             <View style={styles.box}>
               <Controller
                 control={control}
                 defaultValue=""
                 name="model"
+                rules={{
+                  required: 'Campo obrigatório',
+                }}
                 render={({ field }) => (
                   <>
                     <TextInput
@@ -163,8 +183,8 @@ const Stock = () => {
                       value={field.value}
                       onBlur={field.onBlur}
                       onChangeText={field.onChange}
+                      error={errors?.model?.message}
                     />
-                    {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
                   </>
                 )}
               />
@@ -174,7 +194,9 @@ const Stock = () => {
                 control={control}
                 defaultValue=""
                 name="color"
-                flex={1}
+                rules={{
+                  required: 'Campo obrigatório',
+                }}
                 render={({ field }) => (
                   <>
                     <TextInput
@@ -183,6 +205,7 @@ const Stock = () => {
                       value={field.value}
                       onBlur={field.onBlur}
                       onChangeText={field.onChange}
+                      error={errors?.color?.message}
                     />
                     {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
                   </>
@@ -192,6 +215,9 @@ const Stock = () => {
                 control={control}
                 defaultValue=""
                 name="number"
+                rules={{
+                  required: 'Campo obrigatório',
+                }}
                 render={({ field }) => (
                   <>
                     <TextInput
@@ -201,6 +227,7 @@ const Stock = () => {
                       value={field.value}
                       onBlur={field.onBlur}
                       onChangeText={field.onChange}
+                      error={errors?.number?.message}
                     />
                     {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
                   </>
@@ -212,6 +239,9 @@ const Stock = () => {
                 control={control}
                 defaultValue=""
                 name="amount"
+                rules={{
+                  required: 'Campo obrigatório',
+                }}
                 render={({ field }) => (
                   <>
                     <TextInput
@@ -221,6 +251,7 @@ const Stock = () => {
                       value={field.value}
                       onBlur={field.onBlur}
                       onChangeText={field.onChange}
+                      error={errors?.amount?.message}
                     />
                     {/* <HelperText type="error">{errors?.name?.message}</HelperText> */}
                   </>
@@ -296,7 +327,7 @@ const Stock = () => {
                 style={{ flex: 1, margin: 8 }}
                 mode="contained"
                 onPress={handleSubmit(submit)}
-                disabled={!formState.isValid}
+                //disabled={!formState.isValid}
               >
                 Entrada
               </Button>
@@ -326,17 +357,21 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   box: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    width: '100%',
+    // justifyContent: 'space-around',
   },
   button: {
-    marginTop: 20,
-    height: 40,
-    width: 100,
-    alignSelf: 'center',
+    width: 130,
+    marginLeft: 5,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   input: {
+    width: 130,
     flex: 1,
     marginTop: 5,
     marginLeft: 5,
@@ -347,6 +382,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
     marginBottom: 50,
+  },
+  error: {
+    color: 'red',
   },
 })
 

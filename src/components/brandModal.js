@@ -89,18 +89,22 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
     borderRadius: 13,
+    flex: 1,
   },
   container: {},
   box: {
     display: 'flex',
   },
   button: {
+    flex: 1,
+    width: '100%',
     marginLeft: 5,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonWrapper: {
+    flex: 1,
     marginTop: 10,
     flexDirection: 'row',
     justifyContent: 'center',

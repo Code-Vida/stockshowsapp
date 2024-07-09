@@ -60,12 +60,14 @@ const useStockReport = () => {
   }, [])
 
   useEffect(() => {
-    if (data?.getProduct?.nodes.length > 0) {
-      setMessage('Transação executada com sucesso.')
-      setVisible(true)
-    } else {
-      setMessage('Nenhum produto encontrado.')
-      setVisible(true)
+    if (data) {
+      if (data?.getProduct?.nodes.length > 0) {
+        setMessage('Transação executada com sucesso.')
+        setVisible(true)
+      } else {
+        setMessage('Nenhum produto encontrado.')
+        setVisible(true)
+      }
     }
   }, [data])
 

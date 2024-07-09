@@ -8,6 +8,7 @@ import {
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import Sales from 'screens/sales/sales'
+import Devolution from 'screens/devolution/devolution'
 import Products from 'screens/products/products'
 import Reports from 'screens/reports/reports'
 import Stock from 'screens/stock/stock'
@@ -65,6 +66,11 @@ const App = () => (
             name="StockReport"
             component={StockReport}
             options={{ title: 'Relatórios' }}
+          />
+          <Stack.Screen
+            name="Devolution"
+            component={Devolution}
+            options={{ title: 'Trocas / Devoluções' }}
           />
         </Stack.Navigator>
       </NavigationContainer>

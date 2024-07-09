@@ -24,6 +24,16 @@ const Products = ({ navigation }) => {
           Entrada
         </Button>
       </View>
+      <View style={styles.box}>
+        <Button
+          style={styles.buttonDevolution}
+          mode="contained"
+          onPress={() => navigation.navigate('Devolution')}
+          contentStyle={styles.buttonDevolution}
+        >
+          <Text style={{ flex: 1 }}>Troca / Devolução</Text>
+        </Button>
+      </View>
     </View>
   )
 }
@@ -64,5 +74,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     backgroundColor: '#ed7777',
+  },
+  buttonDevolution: {
+    flex: 1,
+    margin: 3,
+    marginLeft: 8,
+    marginRight: 8,
+    height: 100,
+    width: '90%',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    backgroundColor: '#77aeed',
   },
 })
